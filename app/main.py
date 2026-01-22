@@ -147,3 +147,50 @@ def submit_daily_report_api(report: DailyReportSchema):
                 "streak": 0,
             }
         }
+    
+@app.get("/debug/compare-state")
+def debug_compare_state():
+    """
+    Read-only comparison between SQLite and PostgreSQL.
+    No mutations. Inspection only.
+    """
+
+    # SQLite (authoritative today)
+    sqlite_player, sqlite_stats, _, _ = get_player_state()
+
+    # PostgreSQL snapshot
+    snapshot = read_postgres_state_snapshot()
+    pg_player = snapshot["player"].__dict__
+    pg_stats = snapshot["stats"].__dict__ if snapshot["stats"] else {}
+
+    return {
+        "sqlite": {
+            "player": {
+                "name": sqlite_player["name"],
+                "level": sqlite_player["level"],
+                "current_xp": sqlite_player["current_xp"],
+                "rank": sqlite_player["rank"],
+                "streak": sqlite_player.get("streak"),
+                "iron_mode": sqlite_player.get("iron_mode"),
+                "sot": sqlite_player.get("sot"),
+                "stabilization_days": sqlite_player.get("stabilization_days"),
+                "active_title": sqlite_player.get("active_title"),
+            },
+            "stats": sqlite_stats,
+        },
+        "postgresql": {
+            "player": {
+                "name": pg_player.get("name"),
+                "level": pg_player.get("level"),
+                "current_xp": pg_player.get("current_xp"),
+                "rank": pg_player.get("rank"),
+                "streak": pg_player.get("streak"),
+                "iron_mode": pg_player.get("iron_mode"),
+                "sot": pg_player.get("sot"),
+                "stabilization_days": pg_player.get("stabilization_days"),
+                "active_title": pg_player.get("active_title"),
+            },
+            "stats": pg_stats,
+        },
+    }
+
