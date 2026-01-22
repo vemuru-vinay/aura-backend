@@ -84,9 +84,14 @@ def evaluate_missed_day():
     conn = get_connection()
     cursor = conn.cursor()
 
-    yesterday = get_previous_system_day()
-
-    state = get_daily_state(cursor, yesterday)
+    # 🔐 GUARD: daily_state table may not exist on fresh DB
+    try:
+        yesterday = get_previous_system_day()
+        state = get_daily_state(cursor, yesterday)
+    except Exception as e:
+        print("ℹ️ Daily state table not initialized yet — skipping rollover")
+        conn.close()
+        return
 
     # ─────────────────────────────────────────────
     # 1️⃣ HANDLE MISSED DAY (IF UNRESOLVED)
