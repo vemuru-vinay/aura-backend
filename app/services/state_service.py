@@ -84,7 +84,7 @@ def get_player_state():
     - authoritative time window data
     """
     system_day = get_system_day()
-    print("🧠 AURA SYSTEM DAY (IST):", system_day)
+    print("🧪 DAILY_QUESTS LOADED:", DAILY_QUESTS)
 
 
         # ─── AUTHORITATIVE QUEST AVAILABILITY ───────
