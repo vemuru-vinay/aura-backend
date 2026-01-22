@@ -159,8 +159,8 @@ def get_player_state():
 
 
     # ─── DAILY RESOLUTION STATE ─────────────────
-    ensure_today_row(cursor, system_day)
-    conn.commit()
+    #ensure_today_row(cursor, system_day)
+    #conn.commit()
 
     cursor.execute(
         """
