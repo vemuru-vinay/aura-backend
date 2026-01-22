@@ -8,13 +8,15 @@ from datetime import datetime
 import pytz
 
 from app.db.database import get_connection
+from datetime import datetime, timezone, timedelta
 
 
 IST = pytz.timezone("Asia/Kolkata")
 
 
 def _current_ist_datetime():
-    return datetime.now(IST)
+    return datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(IST)
+
 
 
 def _current_ist_date():

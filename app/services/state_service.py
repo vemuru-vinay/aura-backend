@@ -20,7 +20,8 @@ from app.core.constants import DAILY_QUESTS
 IST = timezone(timedelta(hours=5, minutes=30))
 
 def get_time_status():
-    now = datetime.now(IST)
+    now = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(IST)
+
 
     end_of_day = now.replace(
         hour=23,
@@ -52,7 +53,8 @@ def _get_time_remaining_today():
     - formatted string HH:MM:SS
     - submission_allowed (bool)
     """
-    now = datetime.now(IST)
+    now = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(IST)
+
 
     end_of_day = now.replace(
         hour=23, minute=59, second=59, microsecond=0

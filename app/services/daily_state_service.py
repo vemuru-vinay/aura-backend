@@ -11,14 +11,14 @@ def get_system_day():
     """
     Returns current system day in IST (YYYY-MM-DD).
     """
-    return datetime.now(IST).date().isoformat()
+    return datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(IST).date().isoformat()
 
 
 def get_previous_system_day():
     """
     Returns previous system day in IST.
     """
-    return (datetime.now(IST).date() - timedelta(days=1)).isoformat()
+    return (datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(IST).date() - timedelta(days=1)).isoformat()
 
 
 def get_daily_state(cursor, system_day):

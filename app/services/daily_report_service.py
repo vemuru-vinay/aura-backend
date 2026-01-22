@@ -21,7 +21,7 @@ IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def is_within_submission_window() -> bool:
-    now = datetime.now(IST)
+    now = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(IST)
 
     print("⏱️ IST NOW:", now)
     start_of_day = now.replace(
