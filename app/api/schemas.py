@@ -31,3 +31,10 @@ class StatusResponseSchema(BaseModel):
     stats: Dict[str, int]
     penalties: Dict[str, List[dict]]
     authority: dict
+
+    # ✅ ADD THESE
+    active_quests: Dict[str, dict]
+    submission_allowed: bool
+    time_remaining: str
+    system_day: str
+    weekday: int
