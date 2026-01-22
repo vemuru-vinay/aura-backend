@@ -117,14 +117,18 @@ def submit_daily_report(report, penalty_results):
 
         ensure_today_row(cursor, system_day)
 
-        cursor.execute(
-            "SELECT resolved FROM daily_state WHERE date = ?;",
-            (system_day,)
-        )
-        row = cursor.fetchone()
-    
+        try:
+            cursor.execute(
+                "SELECT resolved FROM daily_state WHERE date = ?;",
+                (system_day,)
+            )
+            row = cursor.fetchone()
+        except Exception:
+            row = None
+
         if row and row["resolved"] == 1:
             raise Exception("DAY ALREADY RESOLVED")
+
     
         conn.commit()
         # ─── AUTHORITATIVE DAY LOCK ────────────────

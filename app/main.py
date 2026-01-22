@@ -32,13 +32,14 @@ app = FastAPI(
 # ─────────────────────────────────────────────
 @app.on_event("startup")
 def system_startup():
-    """
-    Runs once when the API starts.
-    Resolves missed days safely without blocking startup.
-    """
-    print("⏱️ Running daily rollover check...")
-    evaluate_missed_day()
-    print("✅ Daily rollover complete")
+    print("⏱️ Startup: checking daily rollover eligibility")
+
+    try:
+        evaluate_missed_day()
+        print("✅ Daily rollover complete")
+    except Exception as e:
+        print("ℹ️ Daily rollover skipped:", e)
+
 
 
 # ─── ROUTERS ─────────────────────────────────

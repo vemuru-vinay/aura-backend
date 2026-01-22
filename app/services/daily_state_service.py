@@ -57,14 +57,18 @@ def mark_day_resolved(cursor, system_day, resolution_type):
     )
 
 def ensure_today_row(cursor, system_day):
-    cursor.execute(
-        """
-        INSERT OR IGNORE INTO daily_state
-        (date, resolved, resolution_type, penalties_generated)
-        VALUES (?, 0, 'PENDING', 0);
-        """,
-        (system_day,)
-    )
+    try:
+        cursor.execute(
+            """
+            INSERT OR IGNORE INTO daily_state
+            (date, resolved, resolution_type, penalties_generated)
+            VALUES (?, 0, 'PENDING', 0);
+            """,
+            (system_day,)
+        )
+    except Exception:
+        # Table not ready yet → do nothing
+        return
 
 
 
