@@ -324,7 +324,9 @@ def submit_daily_report(report, penalty_results):
 
         conn.commit()
 
-        write_daily_report_postgres(postgres_payload)
+        if write_daily_report_postgres:
+            write_daily_report_postgres(postgres_payload)
+
 
 
         print("✅ COMMITTING DAILY REPORT FOR:", system_day)
