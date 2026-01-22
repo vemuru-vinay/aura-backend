@@ -52,22 +52,8 @@ print("🚀 main.py loaded")
 def system_status():
     print("➡️ /status hit")
 
-    # SQLite (original, preserved for rollback)
-    # player, stats, penalties, xp_data = get_player_state()
+    player, stats, penalties, xp_data = get_player_state()
 
-    # PostgreSQL (read-only test)
-    snapshot = read_postgres_state_snapshot()
-
-    player = snapshot["player"].__dict__
-    stats = snapshot["stats"].__dict__ if snapshot["stats"] else {}
-    penalties = {}
-    xp_data = {
-        "xp_required_for_next_level": None,
-        "xp_to_next_level": None,
-        "submission_allowed": False,
-        "time_remaining": "00:00:00",
-        "active_quests": {},
-    }
 
     player["day_resolved"] = False
     player["day_resolution_type"] = None
