@@ -6,6 +6,7 @@ Handles submission and validation of daily quest reports.
 from datetime import datetime, timezone, timedelta
 from app.db.database import get_connection
 from app.core.constants import DAILY_QUESTS, LUST_BOSS
+from app.db.postgres_daily_report_writer import write_daily_report_postgres
 from app.services.daily_state_service import (
     get_system_day,
     assert_day_not_resolved,
@@ -276,7 +277,52 @@ def submit_daily_report(report, penalty_results):
 
         from app.services.streak_service import update_streak
         streak_result = update_streak(cursor, report)
-        streak_value = int(streak_result.get("new_streak", 0))      
+        streak_value = int(streak_result.get("new_streak", 0))  
+
+                # ─────────────────────────────────────────────
+        # POSTGRESQL AUTHORITATIVE WRITE (ADD-ONLY)
+        # ─────────────────────────────────────────────
+
+        postgres_payload = {
+            "system_day": system_day,
+
+            # report values
+            "STR": report["STR"],
+            "INT": report["INT"],
+            "VIT": report["VIT"],
+            "AGI": report["AGI"],
+            "PER": report["PER"],
+            "CON": report["CON"],
+            "CHA": report["CHA"],
+            "NET": report["NET"],
+            "LUST_BOSS": report["LUST_BOSS"],
+
+            # XP
+            "xp_gained": xp_gained,
+            "xp_lost": xp_lost,
+            "penalty_xp_lost": penalty_xp_lost,
+
+            # stats delta
+            "stat_deltas": {
+                "STR": 1 if report.get("STR") == 1 else -1,
+                "INT": 1 if report.get("INT") == 1 else -1,
+                "VIT": 1 if report.get("VIT") == 1 else -1,
+                "AGI": 1 if report.get("AGI") == 1 else -1,
+                "PER": 1 if report.get("PER") == 1 else -1,
+                "CON": 1 if report.get("CON") == 1 else -1,
+                "CHA": 1 if report.get("CHA") == 1 else -1,
+                "NET": 1 if report.get("NET") == 1 else -1,
+                "LB": 1 if report.get("LUST_BOSS") == 1 else -1,
+            },
+
+            # penalties closed today
+            "closed_penalties": [
+                k for k, v in penalty_results.items() if v == 1
+            ],
+        }
+
+        write_daily_report_postgres(postgres_payload)
+    
 
         conn.commit()
 
