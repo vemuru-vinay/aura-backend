@@ -4,3 +4,4 @@ sqlalchemy
 pydantic
 sqlalchemy
 psycopg2-binary
+pytz
