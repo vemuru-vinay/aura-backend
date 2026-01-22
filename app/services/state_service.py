@@ -197,3 +197,57 @@ def get_player_state():
         "time_remaining": time_status["time_remaining"],
          "active_quests": active_quests,
     }
+
+# ─────────────────────────────────────────────
+# POSTGRESQL (READ-ONLY SNAPSHOT — ADDED)
+# ─────────────────────────────────────────────
+
+from app.db.postgres_database import SessionLocal
+from app.db.postgres_models import (
+    Player as PG_Player,
+    Stats as PG_Stats,
+    Penalty as PG_Penalty,
+    DailyState as PG_DailyState,
+)
+
+def read_postgres_state_snapshot():
+    """
+    READ-ONLY helper.
+    Does NOT affect system behavior.
+    Does NOT replace SQLite.
+    Used only for verification and debugging.
+    """
+
+    system_day = get_system_day()
+    db = SessionLocal()
+
+    try:
+        player = db.query(PG_Player).first()
+        stats = (
+            db.query(PG_Stats)
+            .filter(PG_Stats.player_id == player.id)
+            .first()
+            if player else None
+        )
+
+        penalties = (
+            db.query(PG_Penalty)
+            .filter(PG_Penalty.is_completed == 0)
+            .all()
+        )
+
+        daily_state = (
+            db.query(PG_DailyState)
+            .filter(PG_DailyState.date == system_day)
+            .first()
+        )
+
+        return {
+            "player": player,
+            "stats": stats,
+            "penalties": penalties,
+            "daily_state": daily_state,
+        }
+
+    finally:
+        db.close()

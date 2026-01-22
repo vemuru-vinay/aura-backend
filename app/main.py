@@ -14,6 +14,8 @@ from app.api.rewards import router as rewards_router
 from datetime import date
 from datetime import datetime, timezone, timedelta
 from app.services.daily_state_service import get_system_day
+from app.services.state_service import read_postgres_state_snapshot
+
 
 # DAILY STATE (MISS HANDLING)
 from app.services.daily_state_service import evaluate_missed_day
@@ -50,7 +52,24 @@ print("🚀 main.py loaded")
 def system_status():
     print("➡️ /status hit")
 
-    player, stats, penalties, xp_data = get_player_state()
+    # SQLite (original, preserved for rollback)
+    # player, stats, penalties, xp_data = get_player_state()
+
+    # PostgreSQL (read-only test)
+    snapshot = read_postgres_state_snapshot()
+
+    player = snapshot["player"].__dict__
+    stats = snapshot["stats"].__dict__ if snapshot["stats"] else {}
+    penalties = {}
+    xp_data = {
+        "xp_required_for_next_level": None,
+        "xp_to_next_level": None,
+        "submission_allowed": False,
+        "time_remaining": "00:00:00",
+        "active_quests": {},
+    }
+
+
 
         # ─── AUTHORITATIVE TIME (BACKEND) ─────────────
     system_day = get_system_day()  # YYYY-MM-DD
