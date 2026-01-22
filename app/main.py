@@ -32,13 +32,9 @@ app = FastAPI(
 # ─────────────────────────────────────────────
 @app.on_event("startup")
 def system_startup():
-    print("⏱️ Startup: checking daily rollover eligibility")
+    print("⏱️ Startup check skipped in development")
 
-    try:
-        evaluate_missed_day()
-        print("✅ Daily rollover complete")
-    except Exception as e:
-        print("ℹ️ Daily rollover skipped:", e)
+    
 
 
 
