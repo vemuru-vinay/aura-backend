@@ -16,6 +16,7 @@ from app.core.constants import DAILY_QUESTS
 # SYSTEM TIME (IST)
 # ─────────────────────────────────────────────
 
+print("🔥🔥🔥 STATE_SERVICE FILE LOADED FROM THIS COPY 🔥🔥🔥")
 
 IST = timezone(timedelta(hours=5, minutes=30))
 
