@@ -69,6 +69,10 @@ def system_status():
         "active_quests": {},
     }
 
+    player["day_resolved"] = False
+    player["day_resolution_type"] = None
+
+
 
 
         # ─── AUTHORITATIVE TIME (BACKEND) ─────────────
