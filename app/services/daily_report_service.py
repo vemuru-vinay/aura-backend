@@ -111,25 +111,22 @@ def submit_daily_report(report, penalty_results):
     conn = get_connection()
     cursor = conn.cursor()
 
-    ensure_today_row(cursor, system_day)
-
-    cursor.execute(
-        "SELECT resolved FROM daily_state WHERE date = ?;",
-        (system_day,)
-    )
-    row = cursor.fetchone()
-    
-    if row and row["resolved"] == 1:
-        raise Exception("DAY ALREADY RESOLVED")
-    
-    conn.commit()
-
-
-
-
     print("🧾 SUBMIT DAILY REPORT — SYSTEM DAY:", system_day)
 
     try:
+
+        ensure_today_row(cursor, system_day)
+
+        cursor.execute(
+            "SELECT resolved FROM daily_state WHERE date = ?;",
+            (system_day,)
+        )
+        row = cursor.fetchone()
+    
+        if row and row["resolved"] == 1:
+            raise Exception("DAY ALREADY RESOLVED")
+    
+        conn.commit()
         # ─── AUTHORITATIVE DAY LOCK ────────────────
 
         if report_exists(cursor, system_day):
